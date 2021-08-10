@@ -1,0 +1,27 @@
+---
+- name: Download helm archive
+  get_url:
+    url: "https://get.helm.sh/helm-v{{ helm_version }}-{{ helm_os }}-{{ helm_arch }}.tar.gz"
+    checksum: "{{ helm_checksum_archive }}"
+    dest: "{{ helm_tmp_directory }}"
+  tags:
+    - helm
+
+- name: Unarchive helm-client
+  unarchive:
+    src: "{{ helm_tmp_directory }}/helm-v{{ helm_version }}-{{ helm_os }}-{{ helm_arch }}.tar.gz"
+    dest: "{{ helm_tmp_directory }}"
+    remote_src: yes
+  tags:
+    - helm
+
+- name: Copy helm binary to destination directory
+  copy:
+    src: "{{ helm_tmp_directory }}/{{ helm_os }}-{{ helm_arch }}/{{ item }}"
+    dest: "{{ helm_bin_directory }}/{{ item }}"
+    mode: "{{ helm_binary_mode }}"
+    owner: "{{ helm_owner }}"
+    group: "{{ helm_group }}"
+    remote_src: yes
+  with_items:
+    - helm

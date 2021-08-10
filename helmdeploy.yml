@@ -1,0 +1,100 @@
+---
+- name: Install git if it doesn't exist
+  hosts: bastion
+  become: yes
+
+  tasks:
+    - name: Install git
+      apt:
+        name: git
+        state: present
+        update_cache: yes
+
+- name: Clone git repo for helm_vars for bastion
+  hosts: 
+    - bastion
+
+  tasks:
+    - name: git clone
+      ansible.builtin.git:
+        repo: "https://nvs4a3:github2021!@github.com/nvs4a3/helm-vars.git"
+        dest: "{{ ansible_user_dir }}/helm_vars"
+        version: main
+
+- name: Clone git repo for helm_vars for localhost
+  hosts:
+    - localhost
+
+  tasks:
+    - name: git clone
+      ansible.builtin.git:
+        repo: "https://nvs4a3:github2021!@github.com/nvs4a3/helm-vars.git"
+        dest: "{{ ansible_user_dir }}/helm_vars"
+        version: main
+        executable: /opt/bitnami/git/bin/git
+
+- name: Gather Information of existence of kubectl and helm packages
+  hosts: bastion
+
+  tasks:
+    - name: create .kube dir in the bastion host
+      file:
+        path: "{{ ansible_user_dir }}/.kube"
+        mode: '0755'
+        state: directory
+
+    - name: copy kube config to bastion host
+      copy:
+        src: /tmp/kube_config
+        dest: "{{ ansible_user_dir }}/.kube/config"
+        owner: "{{ ansible_user_id }}"
+        mode: '0644'
+    
+    - name: Verify existene of kubectl
+      shell: kubectl
+      register: kubectl_output
+      ignore_errors: yes
+
+    - name: Verify existence of helm
+      shell: helm
+      register: helm_output
+      ignore_errors: yes 
+      
+    
+
+- name: Conditional Deployment of kubectl and helm 
+  hosts: bastion
+  become: yes
+
+  tasks:
+    - name: Deploy kubectl if condition is met
+      include_role:
+        name: kubectl
+      when: kubectl_output.stderr != ""
+    
+    - name: Deploy helm if condition is met
+      include_role:
+        name: helm
+      when: helm_output.stderr != ""
+
+- name: Set up of helm package and rendering template 
+  hosts: bastion
+  vars_files:
+    - "{{ control_path }}/helm_vars/{{ service }}.yml"
+  
+  tasks:
+    - name: Clone git repo of helm package for the service
+      ansible.builtin.git:
+        repo: "https://nvs4a3:github2021!@github.com/nvs4a3/{{ service }}.git"
+        dest: "{{ ansible_user_dir }}/{{ service }}"
+        version: main
+    
+    - name: Render template to a shell script
+      ansible.builtin.template:
+        src: helmdeploy.sh.j2
+        dest: "{{ ansible_user_dir }}/helmdeploy.sh"
+        owner: "{{ ansible_user_id }}" 
+        mode: '0755'
+
+    - name: Shell script Execution
+      ansible.builtin.shell: "{{ ansible_user_dir }}/helmdeploy.sh"

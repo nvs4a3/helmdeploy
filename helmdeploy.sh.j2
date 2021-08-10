@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd {{ ansible_user_dir}}/{{ service }}
+
+helm upgrade -i {{ service }} . --namespace {{ k8s_namespace }} -f {{ ansible_user_dir }}/helm_vars/{{ service }}.yml 

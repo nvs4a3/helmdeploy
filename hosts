@@ -1,0 +1,6 @@
+[all]
+localhost
+bastion
+
+[bastion]
+bastion ansible_host=54.179.57.58 ansible_user=admin control_path=/bitnami/jenkins/home
