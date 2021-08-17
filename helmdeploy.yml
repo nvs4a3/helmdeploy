@@ -10,24 +10,21 @@
         state: present
         update_cache: yes
 
-    - name: print content of env var
-      ansible.builtin.debug:
-        msg: "Value of env var of SSH_FILE is {{ lookup ('env', 'GIT_SSH') }}" 
-
-    - name: Copy ssh file
-      ansible.builtin.copy: 
-        src: ./id_rsa
-        dest: "{{ ansible_user_dir }}/.ssh/id_ed25519"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: '0400'
-
 
 - name: Clone git repo for helm_vars for bastion
   hosts: 
     - bastion
 
   tasks:
+
+    - name: Copy ssh file
+      ansible.builtin.copy:
+        src:  "{{ lookup('env', 'GIT_SSH') }}"
+        dest: "{{ ansible_user_dir }}/.ssh/id_ed25519"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0400'
+
     - name: git clone
       ansible.builtin.git:
         repo: "git@github.com:nvs4a3/helm-vars.git"
