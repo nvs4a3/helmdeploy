@@ -11,10 +11,10 @@
         update_cache: yes
 
     - name: Copy ssh file
-      copy: 
+      ansible.builtin.copy: 
         src: "{{ lookup('env', 'GIT_SSH') }}"
         dest: "{{ ansible_user_dir }}/.ssh/id_ed25519"
-        user: "{{ ansible_user }}"
+        owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0400'
 
