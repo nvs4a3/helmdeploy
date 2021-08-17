@@ -43,7 +43,7 @@
         dest: "{{ ansible_user_dir }}/helm_vars"
         version: main
         executable: /opt/bitnami/git/bin/git
-        key_file: "{{ lookup('env', 'GIT_SSH' }}"
+        key_file: "{{ lookup('env', 'GIT_SSH') }}"
         accept_hostkey: yes
 
 - name: Gather Information of existence of kubectl and helm packages
