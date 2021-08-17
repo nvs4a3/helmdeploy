@@ -10,6 +10,10 @@
         state: present
         update_cache: yes
 
+    - name: print content of env var
+      ansible.builtin.debug:
+        msg: "Value of env var of SSH_FILE is {{ lookup ('env', 'GIT_SSH') }}" 
+
     - name: Copy ssh file
       ansible.builtin.copy: 
         src: "{{ lookup('env', 'GIT_SSH') }}"
