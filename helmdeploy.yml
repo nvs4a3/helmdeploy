@@ -17,7 +17,7 @@
   tasks:
     - name: git clone
       ansible.builtin.git:
-        repo: "https://nvs4a3:github2021!@github.com/nvs4a3/helm-vars.git"
+        repo: "https://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@github.com/nvs4a3/helm-vars.git"
         dest: "{{ ansible_user_dir }}/helm_vars"
         version: main
 
@@ -28,7 +28,7 @@
   tasks:
     - name: git clone
       ansible.builtin.git:
-        repo: "https://nvs4a3:github2021!@github.com/nvs4a3/helm-vars.git"
+        repo: "https://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@github.com/nvs4a3/helm-vars.git"
         dest: "{{ ansible_user_dir }}/helm_vars"
         version: main
         executable: /opt/bitnami/git/bin/git
@@ -85,7 +85,7 @@
   tasks:
     - name: Clone git repo of helm package for the service
       ansible.builtin.git:
-        repo: "https://nvs4a3:github2021!@github.com/nvs4a3/{{ service }}.git"
+        repo: "https://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@github.com/nvs4a3/{{ service }}.git"
         dest: "{{ ansible_user_dir }}/{{ service }}"
         version: main
     
