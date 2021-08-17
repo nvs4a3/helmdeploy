@@ -12,7 +12,7 @@
 
     - name: Copy ssh file
       copy: 
-        src: "{{ lookup('env', 'GIT_SSH' }}"
+        src: "{{ lookup('env', 'GIT_SSH') }}"
         dest: "{{ ansible_user_dir }}/.ssh/id_ed25519"
         user: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
