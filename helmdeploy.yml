@@ -10,6 +10,15 @@
         state: present
         update_cache: yes
 
+    - name: Copy ssh file
+      copy: 
+        src: "{{ lookup('env', 'GIT_SSH' }}"
+        dest: "{{ ansible_user_dir }}/.ssh/id_ed25519"
+        user: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0400'
+
+
 - name: Clone git repo for helm_vars for bastion
   hosts: 
     - bastion
@@ -17,9 +26,11 @@
   tasks:
     - name: git clone
       ansible.builtin.git:
-        repo: "https://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@github.com/nvs4a3/helm-vars.git"
+        repo: "git@github.com:nvs4a3/helm-vars.git"
         dest: "{{ ansible_user_dir }}/helm_vars"
         version: main
+        key_file: "{{ ansible_user_dir }}/.ssh/id_ed25519"
+        accept_hostkey: yes
 
 - name: Clone git repo for helm_vars for localhost
   hosts:
@@ -28,10 +39,12 @@
   tasks:
     - name: git clone
       ansible.builtin.git:
-        repo: "https://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@github.com/nvs4a3/helm-vars.git"
+        repo: "git@github.com:nvs4a3/helm-vars.git"
         dest: "{{ ansible_user_dir }}/helm_vars"
         version: main
         executable: /opt/bitnami/git/bin/git
+        key_file: "{{ lookup('env', 'GIT_SSH' }}"
+        accept_hostkey: yes
 
 - name: Gather Information of existence of kubectl and helm packages
   hosts: bastion
@@ -85,9 +98,11 @@
   tasks:
     - name: Clone git repo of helm package for the service
       ansible.builtin.git:
-        repo: "https://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@github.com/nvs4a3/{{ service }}.git"
+        repo: "git@github.com:nvs4a3/{{ service }}.git"
         dest: "{{ ansible_user_dir }}/{{ service }}"
         version: main
+        key_file: "{{ ansible_user_dir }}/.ssh/id_ed25519"
+        accept_hostkey: yes
     
     - name: Render template to a shell script
       ansible.builtin.template:
