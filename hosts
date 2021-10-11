@@ -3,4 +3,4 @@ localhost
 bastion
 
 [bastion]
-bastion ansible_host=54.169.241.184 ansible_user=admin control_path=/bitnami/jenkins/home
+bastion ansible_host=175.41.163.39 ansible_user=admin control_path=/bitnami/jenkins/home
