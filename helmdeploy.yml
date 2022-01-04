@@ -101,7 +101,7 @@
       ansible.builtin.git:
         repo: "git@github.com:nvs4a3/{{ service }}.git"
         dest: "{{ ansible_user_dir }}/{{ service }}"
-        version: main
+        version: "{{ git.branch }}"
         key_file: "{{ ansible_user_dir }}/.ssh/id_ed25519"
         accept_hostkey: yes
     
